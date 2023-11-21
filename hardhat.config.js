@@ -17,6 +17,10 @@ module.exports = {
     hardhat: {
       chainId: 11155111,
     },
+    sepolia: {
+      url: process.env.SEPOLIA_URL,
+      accounts: [process.env.ACCOUNT_1_PRIVATE_KEY],
+    },
   },
   solidity: {
     version: "0.8.19",
