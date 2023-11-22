@@ -79,11 +79,11 @@ typings/
 *.tgz
 
 # Hardhat
-cache/
-artifacts/
-coverage/
-dist/
-test/
+cache
+artifacts
+coverage
+dist
+test
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
