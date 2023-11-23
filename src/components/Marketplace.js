@@ -25,8 +25,8 @@ export default function Marketplace() {
     const items = await Promise.all(
       transaction.map(async (i) => {
         const tokenURI = await contract.tokenURI(i.tokenId);
-        let meta = await axios.get(tokenURI);
-        meta = meta.data;
+        const meta = await axios.get(tokenURI);
+        const data = meta.data;
 
         let price = etherUtils.formatUnits(i.price.toString(), "ether");
         let item = {
@@ -34,9 +34,10 @@ export default function Marketplace() {
           tokenId: i.tokenId.toNumber(),
           seller: i.seller,
           owner: i.owner,
-          image: meta.image,
-          name: meta.name,
-          description: meta.description,
+          name: data.name,
+          description: data.description,
+          image: data.image,
+          beat: data.beat,
         };
         return item;
       })

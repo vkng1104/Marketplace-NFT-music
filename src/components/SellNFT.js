@@ -10,19 +10,47 @@ export default function SellNFT() {
     description: "",
     price: "",
   });
-  const [fileURL, setFileURL] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [beatUrl, setBeatUrl] = useState(null);
   const [message, updateMessage] = useState("");
 
   //This function uploads the NFT image to IPFS
   async function OnChangeFile(e) {
-    var file = e.target.files[0];
+    const fileInput = e.target;
+    const file = fileInput.files[0];
+
+    // Check if a file is selected
+    if (file) {
+      // Check the file type for the image input
+      if (fileInput.id === "image" && !file.type.startsWith("image/")) {
+        alert("Please upload a valid image file.");
+        fileInput.value = ""; // Clear the file input
+        return;
+      }
+
+      // Check the file type for the music beat input
+      if (fileInput.id === "musicBeat" && !file.type.startsWith("audio/")) {
+        alert("Please upload a valid MP3 file for the music beat.");
+        fileInput.value = ""; // Clear the file input
+        return;
+      }
+
+      // Proceed with handling the file (e.g., upload or process)
+      console.log("File type is valid:", file.type);
+    }
+
     //check for file extension
     try {
       //upload the file to IPFS
       const response = await uploadFileToIPFS(file);
       if (response.success === true) {
-        console.log("Uploaded image to Pinata: ", response.pinataURL);
-        setFileURL(response.pinataURL);
+        if (fileInput.id === "image") {
+          console.log("Uploaded image to Pinata: ", response.pinataURL);
+          setImageUrl(response.pinataURL);
+        } else {
+          console.log("Uploaded music beat to Pinata: ", response.pinataURL);
+          setBeatUrl(response.pinataURL);
+        }
       }
     } catch (e) {
       console.log("Error during file upload", e);
@@ -33,13 +61,14 @@ export default function SellNFT() {
   async function uploadMetadataToIPFS() {
     const { name, description, price } = formParams;
     //Make sure that none of the fields are empty
-    if (!name || !description || !price || !fileURL) return;
+    if (!name || !description || !price || !imageUrl || !beatUrl) return;
 
     const nftJSON = {
       name,
       description,
       price,
-      image: fileURL,
+      image: imageUrl,
+      beat: beatUrl,
     };
 
     console.log(nftJSON);
@@ -154,6 +183,7 @@ export default function SellNFT() {
               type="number"
               placeholder="Min 0.01 ETH"
               step="0.01"
+              min="0.01"
               value={formParams.price}
               onChange={(e) =>
                 updateFormParams({ ...formParams, price: e.target.value })
@@ -167,13 +197,23 @@ export default function SellNFT() {
             >
               Upload Image
             </label>
-            <input type={"file"} onChange={OnChangeFile}></input>
+            <input type={"file"} id="image" onChange={OnChangeFile}></input>
+          </div>
+          <br></br>
+          <div>
+            <label
+              className="block text-purple-500 text-sm font-bold mb-2"
+              htmlFor="musicBeat"
+            >
+              Upload Music Beat
+            </label>
+            <input type={"file"} id="musicBeat" onChange={OnChangeFile}></input>
           </div>
           <br></br>
           <div className="text-green text-center">{message}</div>
           <button
             onClick={listNFT}
-            className="font-bold mt-10 w-full bg-purple-500 text-white rounded p-2 shadow-lg"
+            className="font-bold mt-5 w-full bg-purple-500 text-white rounded p-2 shadow-lg"
           >
             List NFT
           </button>

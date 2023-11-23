@@ -67,6 +67,7 @@ export default function NFTPage(props) {
 
       alert("You successfully bought the NFT!");
       updateMessage("");
+      window.location.replace("/profile");
     } catch (e) {
       alert("Upload Error" + e);
     }
