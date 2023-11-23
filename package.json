@@ -3,21 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@openzeppelin/contracts": "^5.0.0",
-    "@testing-library/jest-dom": "^6.1.4",
-    "@testing-library/react": "^14.1.0",
-    "@testing-library/user-event": "^14.5.1",
+    "@openzeppelin/contracts": "^4.9.3",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.2",
     "dotenv": "^16.3.1",
     "fs": "*",
-    "path-browserify": "^1.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "^6.19.0",
     "react-router-dom": "^6.19.0",
     "react-scripts": "5.0.1",
-    "web-vitals": "^3.5.0",
-    "web3modal": "^1.9.7"
+    "web-vitals": "^3.5.0"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -44,21 +42,24 @@
     ]
   },
   "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.6",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "hardhat": "^2.19.1",
+    "ethers": "^5.7.2",
+    "ethereum-waffle": "^3.4.4",
+    "chai": "^4.3.6",
     "assert": "^2.1.0",
     "autoprefixer": "^10.4.16",
     "buffer": "^6.0.3",
-    "chai": "^4.3.10",
     "crypto-browserify": "^3.12.0",
-    "ethereum-waffle": "^4.0.10",
-    "hardhat": "^2.19.1",
     "https-browserify": "^1.0.0",
     "os-browserify": "^0.3.0",
-    "postcss": "^8.4.31",
+    "stream-browserify": "^3.0.0",
     "process": "^0.11.10",
     "react-app-rewired": "^2.2.1",
-    "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
-    "tailwindcss": "^3.3.5",
-    "url": "^0.11.3"
+    "url": "^0.11.3",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5"
   }
 }
