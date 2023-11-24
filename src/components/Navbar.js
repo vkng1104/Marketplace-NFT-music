@@ -10,10 +10,8 @@ function Navbar() {
   const [currAddress, updateAddress] = useState("0x");
 
   async function getAddress() {
-    console.log("Hello 1");
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
-    console.log("Hello 2");
     const addr = await signer.getAddress();
     updateAddress(addr);
   }
@@ -28,33 +26,58 @@ function Navbar() {
   }
 
   async function connectWebsite() {
-    await window.ethereum.request({ method: "eth_requestAccounts" });
-
-    const chainId = await window.ethereum.request({ method: "eth_chainId" });
-    if (chainId !== "0xaa36a7") {
-      // sepolia network
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0xaa36a7" }],
+    try {
+      // Check if there is already a pending eth_requestAccounts request
+      const accounts = await window.ethereum.request({
+        method: "eth_accounts",
       });
-    }
 
-    updateButton();
-    console.log("here");
-    getAddress();
-    window.location.replace(location.pathname);
+      if (accounts.length === 0) {
+        // If there is no pending request, proceed with eth_requestAccounts
+        await window.ethereum.request({ method: "eth_requestAccounts" });
+
+        const chainId = await window.ethereum.request({
+          method: "eth_chainId",
+        });
+        if (chainId !== "0xaa36a7") {
+          // sepolia network
+          await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0xaa36a7" }],
+          });
+        }
+
+        updateButton();
+        console.log("here");
+        getAddress();
+        window.location.replace(location.pathname);
+      } else {
+        // There is already a pending request, trigger MetaMask to open
+        await window.ethereum.request({
+          method: "wallet_requestPermissions",
+          params: [
+            {
+              eth_accounts: {},
+            },
+          ],
+        });
+        console.log("Triggering MetaMask to open");
+      }
+    } catch (error) {
+      // Handle errors
+      console.error("Error connecting to MetaMask:", error);
+    }
   }
 
   useEffect(() => {
     const fetchData = async () => {
-      const isConnected = await new Promise((resolve) => {
-        window.ethereum
-          .request({ method: "eth_requestAccounts" })
-          .then(() => resolve(true))
-          .catch(() => resolve(false));
+      const accounts = await window.ethereum.request({
+        method: "eth_accounts",
       });
 
+      const isConnected = accounts.length > 0;
       console.log(isConnected);
+
       if (isConnected) {
         console.log("here");
         await getAddress();
