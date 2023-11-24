@@ -17,27 +17,24 @@ console.log(secret);
 export const uploadJSONToIPFS = async (JSONBody) => {
   const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
   //making axios POST request to Pinata ⬇️
-  return axios
-    .post(url, JSONBody, {
+  try {
+    const response = await axios.post(url, JSONBody, {
       headers: {
         Authorization: JWT,
       },
-    })
-    .then(function (response) {
-      console.log("JSON file uploaded", response.data.IpfsHash);
-      return {
-        success: true,
-        pinataURL:
-          "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash,
-      };
-    })
-    .catch(function (error) {
-      console.log(error);
-      return {
-        success: false,
-        message: error.message,
-      };
     });
+    console.log("JSON file uploaded", response.data.IpfsHash);
+    return {
+      success: true,
+      pinataURL: "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
 };
 
 export const uploadFileToIPFS = async (file) => {

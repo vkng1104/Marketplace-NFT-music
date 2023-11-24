@@ -37,23 +37,21 @@ export default function SellNFT() {
 
       // Proceed with handling the file (e.g., upload or process)
       console.log("File type is valid:", file.type);
-    }
-
-    //check for file extension
-    try {
-      //upload the file to IPFS
-      const response = await uploadFileToIPFS(file);
-      if (response.success === true) {
-        if (fileInput.id === "image") {
-          console.log("Uploaded image to Pinata: ", response.pinataURL);
-          setImageUrl(response.pinataURL);
-        } else {
-          console.log("Uploaded music beat to Pinata: ", response.pinataURL);
-          setBeatUrl(response.pinataURL);
+      try {
+        // upload the file to IPFS
+        const response = await uploadFileToIPFS(file);
+        if (response.success === true) {
+          if (fileInput.id === "image") {
+            console.log("Uploaded image to Pinata: ", response.pinataURL);
+            setImageUrl(response.pinataURL);
+          } else {
+            console.log("Uploaded music beat to Pinata: ", response.pinataURL);
+            setBeatUrl(response.pinataURL);
+          }
         }
+      } catch (e) {
+        console.log("Error during file upload", e);
       }
-    } catch (e) {
-      console.log("Error during file upload", e);
     }
   }
 
