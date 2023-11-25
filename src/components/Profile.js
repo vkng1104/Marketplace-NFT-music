@@ -13,52 +13,57 @@ export default function Profile() {
   const [totalPrice, updateTotalPrice] = useState("0");
 
   async function getNFTData(tokenId) {
-    let sumPrice = 0;
-    //After adding your Hardhat network to your metamask, this code will get providers and signers
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const addr = await signer.getAddress();
+    try {
+      let sumPrice = 0;
+      //After adding your Hardhat network to your metamask, this code will get providers and signers
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const addr = await signer.getAddress();
 
-    //Pull the deployed contract instance
-    let contract = new ethers.Contract(
-      MarketplaceJSON.address,
-      MarketplaceJSON.abi,
-      signer
-    );
+      //Pull the deployed contract instance
+      let contract = new ethers.Contract(
+        MarketplaceJSON.address,
+        MarketplaceJSON.abi,
+        signer
+      );
 
-    //create an NFT Token
-    let transaction = await contract.getMyNFTs();
+      //create an NFT Token
+      let transaction = await contract.getMyNFTs();
 
-    /*
-     * Below function takes the metadata from tokenURI and the data returned by getMyNFTs() contract function
-     * and creates an object of information that is to be displayed
-     */
+      /*
+       * Below function takes the metadata from tokenURI and the data returned by getMyNFTs() contract function
+       * and creates an object of information that is to be displayed
+       */
 
-    const items = await Promise.all(
-      transaction.map(async (i) => {
-        const tokenURI = await contract.tokenURI(i.tokenId);
-        let meta = await axios.get(tokenURI);
-        meta = meta.data;
+      const items = await Promise.all(
+        transaction.map(async (i) => {
+          const tokenURI = await contract.tokenURI(i.tokenId);
+          let meta = await axios.get(tokenURI);
+          meta = meta.data;
 
-        let price = etherUtils.formatUnits(i.price.toString(), "ether");
-        let item = {
-          price,
-          tokenId: i.tokenId.toNumber(),
-          seller: i.seller,
-          owner: i.owner,
-          image: meta.image,
-          name: meta.name,
-          description: meta.description,
-        };
-        sumPrice += Number(price);
-        return item;
-      })
-    );
+          let price = etherUtils.formatUnits(i.price.toString(), "ether");
+          let item = {
+            price,
+            tokenId: i.tokenId.toNumber(),
+            seller: i.seller,
+            owner: i.owner,
+            image: meta.image,
+            name: meta.name,
+            description: meta.description,
+          };
+          sumPrice += Number(price);
+          return item;
+        })
+      );
 
-    updateData(items);
-    updateFetched(true);
-    updateAddress(addr);
-    updateTotalPrice(sumPrice.toPrecision(3));
+      updateData(items);
+      updateFetched(true);
+      updateAddress(addr);
+      updateTotalPrice(sumPrice.toPrecision(3));
+    } catch (error) {
+      // Handle errors
+      console.error("Error connecting to MetaMask:", error);
+    }
   }
 
   const params = useParams();
@@ -93,7 +98,7 @@ export default function Profile() {
             })}
           </div>
           <div className="mt-10 text-xl">
-            {data.length == 0
+            {address === "0x"
               ? "Oops, No NFT data to display (Are you logged in?)"
               : ""}
           </div>

@@ -11,40 +11,45 @@ export default function Marketplace() {
   const [dataFetched, updateFetched] = useState(false);
 
   async function getAllNFTs() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      MarketplaceJSON.address,
-      MarketplaceJSON.abi,
-      signer
-    );
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        MarketplaceJSON.address,
+        MarketplaceJSON.abi,
+        signer
+      );
 
-    let transaction = await contract.getAllNFTs();
+      let transaction = await contract.getAllNFTs();
 
-    // Fetch all the details of every NFT from the contract and display
-    const items = await Promise.all(
-      transaction.map(async (i) => {
-        const tokenURI = await contract.tokenURI(i.tokenId);
-        const meta = await axios.get(tokenURI);
-        const data = meta.data;
+      // Fetch all the details of every NFT from the contract and display
+      const items = await Promise.all(
+        transaction.map(async (i) => {
+          const tokenURI = await contract.tokenURI(i.tokenId);
+          const meta = await axios.get(tokenURI);
+          const data = meta.data;
 
-        let price = etherUtils.formatUnits(i.price.toString(), "ether");
-        let item = {
-          price,
-          tokenId: i.tokenId.toNumber(),
-          seller: i.seller,
-          owner: i.owner,
-          name: data.name,
-          description: data.description,
-          image: data.image,
-          beat: data.beat,
-        };
-        return item;
-      })
-    );
+          let price = etherUtils.formatUnits(i.price.toString(), "ether");
+          let item = {
+            price,
+            tokenId: i.tokenId.toNumber(),
+            seller: i.seller,
+            owner: i.owner,
+            name: data.name,
+            description: data.description,
+            image: data.image,
+            beat: data.beat,
+          };
+          return item;
+        })
+      );
 
-    updateFetched(true);
-    updateData(items);
+      updateFetched(true);
+      updateData(items);
+    } catch (error) {
+      // Handle errors
+      console.error("Error connecting to MetaMask:", error);
+    }
   }
   const [isMounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
